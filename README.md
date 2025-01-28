@@ -319,6 +319,34 @@ Logger::info('my log message');
 Logger::debug('my log message');
 ```
 
+## Metrics
+
+This package provides a facade for creating metric instruments.
+Details on how to use the instruments can be fouund in the [OpenTelemetry documentation](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/metrics/api.md#meter)
+
+```php
+use Keepsuit\LaravelOpenTelemetry\Facades\Metrics;
+use OpenTelemetry\API\Metrics\ObserverInterface;
+
+// create a gauge
+$value = random_int(0, 256);
+Metrics::createGauge('number_gauge', 'items', 'Random number')
+    ->record($value);
+
+// create an observable gauge
+Metrics::createObservableGauge('number_obs_gauge', 'items', 'Random number')
+    ->observe(static function (ObserverInterface $observer): void {
+        $observer->observe($value);
+    });
+
+// create an up/down counter
+$value = random_int(-50, 50);
+Metrics::createUpDownCounter('number_updown', 'items', 'Random number');
+    ->add($value);
+
+// etc
+```
+
 ## Testing
 
 ```bash

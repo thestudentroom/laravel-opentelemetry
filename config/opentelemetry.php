@@ -83,6 +83,18 @@ return [
     ],
 
     /**
+     * OpenTelemetry metrics configuration
+     */
+    'metrics' => [
+        /**
+         * Metrics exporter
+         * This should be the key of one of the exporters defined in the exporters section
+         * Supported drivers: "otlp", "console", "null"
+         */
+        'exporter' => env('OTEL_METRICS_EXPORTER', 'otlp'),
+    ],
+
+    /**
      * OpenTelemetry exporters
      *
      * Here you can configure exports used by traces and logs.
