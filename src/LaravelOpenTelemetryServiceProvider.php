@@ -69,10 +69,11 @@ class LaravelOpenTelemetryServiceProvider extends PackageServiceProvider
     protected function init(): void
     {
         Clock::setDefault(new CarbonClock);
-
+        $configAttributes = config('opentelemetry.attributes') ?? [];
         $resource = ResourceInfoFactory::defaultResource()->merge(
             ResourceInfo::create(Attributes::create([
                 ResourceAttributes::SERVICE_NAME => config('opentelemetry.service_name'),
+                ...$configAttributes,
             ]))
         );
 
@@ -190,7 +191,9 @@ class LaravelOpenTelemetryServiceProvider extends PackageServiceProvider
     protected function buildOtlpTransport(array $config, string $signal): TransportInterface
     {
         $protocol = $config['protocol'] ?? null;
-        $endpoint = $config['endpoint'] ?? 'http://localhost:4318';
+        $endpoint = $config['endpoint'] ?? 'http://localhost';
+        $port = $protocol == 'grpc' ? 4317 : 4318;
+        $endpoint = "$endpoint:$port";
 
         $maxRetries = $config['max_retries'] ?? 3;
         $timeoutMillis = match ($signal) {

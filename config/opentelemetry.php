@@ -1,6 +1,7 @@
 <?php
 
 use Keepsuit\LaravelOpenTelemetry\Instrumentation;
+use OpenTelemetry\SemConv\ResourceAttributes;
 
 return [
     /**
@@ -13,6 +14,14 @@ return [
      * Supports any otel propagator, for example: "tracecontext", "baggage", "b3", "b3multi", "none"
      */
     'propagators' => env('OTEL_PROPAGATORS', 'tracecontext'),
+
+    /**
+     * Additional attributes for the default resource
+     */
+    'attributes' => [
+        ResourceAttributes::SERVICE_VERSION => env('OTEL_SERVICE_VERSION', 'unknown'),
+        'environment' => env('OTEL_ENV', 'local'),
+    ],
 
     /**
      * OpenTelemetry Traces configuration
@@ -85,7 +94,7 @@ return [
     'exporters' => [
         'otlp' => [
             'driver' => 'otlp',
-            'endpoint' => env('OTEL_EXPORTER_OTLP_ENDPOINT', 'http://localhost:4318'),
+            'endpoint' => env('OTEL_EXPORTER_OTLP_ENDPOINT', 'http://localhost'),
             // Supported: "grpc", "http/protobuf", "http/json"
             'protocol' => env('OTEL_EXPORTER_OTLP_PROTOCOL', 'http/protobuf'),
             'traces_timeout' => env('OTEL_EXPORTER_OTLP_TRACES_TIMEOUT', env('OTEL_EXPORTER_OTLP_TIMEOUT', 10000)),
